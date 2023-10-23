@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# SH-WEB-SWITCH
 
-## Getting Started
+![SH-WEB-SWITCH Logo](https://your-image-url.com)
 
-First, run the development server:
+## Description
+SH-WEB-SWITCH is an innovative web application designed to give you full control over your projects. With this app, you can easily enable or disable your projects at any time, providing you with ultimate flexibility and control.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Technologies Used
+- [NextJS 13](https://nextjs.org/)
+- [NextAuth](https://next-auth.js.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Firestore](https://firebase.google.com/docs/firestore)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Period
+Project Duration: October 12, 2023 - November 01, 2023
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Insights
+During the development of SH-WEB-SWITCH, I encountered several challenges and gained valuable insights:
+1. **Keeping Up with Evolving Technologies:** Technology evolves rapidly, and I had been away from coding for a while due to my HSC examination. This project pushed me to learn and adapt to the latest technologies to stay updated.
+2. **First-time TypeScript Usage:** I incorporated TypeScript into my projects for the first time, which enhanced type safety and code quality.
+3. **Implementing Client-side and Server-side Protection:** Maintaining client-side protection and server-side access control for the application was a challenging but essential task.
+4. **Guest Login System:** I introduced a guest login system with blank response for the first time, enhancing user experience.
+5. **Debugging and Server Errors:** Dealing with hidden bugs and server errors proved to be a common challenge, leading to extensive troubleshooting efforts.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Live Link
+### [SH-WEB-SWITCH](https://shwebswitch.vercel.app)
 
-## Learn More
+## Author
+- **Shawkat Hossain Maruf**
+- Portfolio: [https://shawkath646.vercel.app](https://shawkath646.vercel.app)
+- Email: shawkath646@gmail.com
+- Occupation: Student
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## SEO Keywords
+- Project Control
+- Project Management
+- SH-WEB-SWITCH
+- NextJS 13
+- NextAuth
+- Tailwind CSS
+- TypeScript
+- Firestore
+- Enable Projects
+- Disable Projects
+- Guest Login System
+- Server-side Protection
+- Client-side Protection
+- Web Application
+- Technology Learning
+- Bug Fixing
+- Web Development
+- Student Portfolio
