@@ -1,114 +1,126 @@
-import { FormEvent, Fragment, useState } from 'react';
+import { FormEvent, Fragment, useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { addDoc, serverTimestamp, collection, updateDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Dialog, Switch, Transition } from '@headlessui/react';
+import { AddNewDialougePropsTypes, UpdateDocWithID, defaultBlankData } from '../lib/defaultData';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
-import { CgSpinner } from 'react-icons/cg';
 import { RxCross2 } from 'react-icons/rx';
-import { db, storage } from '@/app/firebase';
+import { db, storage } from '@/app/lib/firebase';
+import StylistInput from './MEXTUI/StylistInput';
+import StylistFileInput from './MEXTUI/StylistFileInput';
+import StylistButton from './MEXTUI/StylistButton';
 
-interface AddNewDialougeProps {
-  isOpen: boolean;
-  setAddNewDialouge: (isOpen: boolean) => void;
-  getSiteList: () => void;
-}
 
-interface formText {
-  value: string,
-  error: string
-}
+const AddNewDialouge = ({ addNewDialouge, setAddNewDialouge, getSiteList }: AddNewDialougePropsTypes) => {
 
-interface status {
-  type: boolean,
-  value: string
-}
+  const initialFormErrors = {
+    siteName: "",
+    siteUrl: "",
+    siteData: "",
+    status: { type: true, value: '' }
+  }
 
-interface updateDataProps {
-  siteID: "";
-  imageURL: string
-}
-
-const AddNewDialouge: React.FC<AddNewDialougeProps> = ({ isOpen, setAddNewDialouge, getSiteList }) => {
-
-  const [siteName, setSiteName] = useState<formText>({
-    value: "",
-    error: ""
-  });
-  const [siteUrl, setSiteUrl] = useState<formText>({
-    value: "",
-    error: ""
-  });
+  const [formData, setFormData] = useState(defaultBlankData);
+  const [formErrors, setFormErrors] = useState(initialFormErrors);
   const [siteLogo, setSiteLogo] = useState<File | null>(null);
-  const [siteData, setSiteData] = useState<string>("");
-  const [isEnabled, setEnabled] = useState<boolean>(true);
-  const [siteMessage, setSiteMessage] = useState<string>("");
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const [status, setStatus] = useState<status>({
-    type: true,
-    value: ""
-  });
+  const [isLoading, setLoading] = useState(false);
+
+  const initialRender = useRef(true);
 
   const { data: session } = useSession();
 
-  const handleLogo = (e: any) => {
-    if (!e.target.files) return;
-    setSiteLogo(e.target.files[0])
-  }
-
-  const handleSubmit = async(e: FormEvent) => {
-    e.preventDefault();
-    if (!siteName.value) {
-      setSiteName({...siteName, error: "Site name is not valid!"});
-      return;
+  useEffect(() => {
+    if (!initialRender.current) {
+      setFormData({
+        siteID: addNewDialouge.siteRawData.siteID,
+        siteName: addNewDialouge.siteRawData.siteName,
+        siteUrl: addNewDialouge.siteRawData.siteUrl,
+        siteMessage: addNewDialouge.siteRawData.siteMessage,
+        siteData: addNewDialouge.siteRawData.siteData,
+        isEnabled: addNewDialouge.siteRawData.isEnabled,
+        createdAt: serverTimestamp(),
+        imageUrl: addNewDialouge.siteRawData.imageUrl
+      })
     } else {
-      setSiteName({...siteName, error: ""});
+      initialRender.current = false;
+    }
+  }, [addNewDialouge.isOpen])
+
+  const handleLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSiteLogo(e.target.files[0]);
+    }
+  };
+
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const { siteData, siteName, siteUrl } = formData;
+
+    setFormErrors(initialFormErrors);
+
+    let hasErrors = false;
+    if (siteName.length < 3) {
+      setFormErrors({ ...formErrors, siteName: "Invalid site name! Minimum 3 character required."});
+      hasErrors = true;
     }
     const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
-    const validUrl = urlPattern.test(siteUrl.value);
+    const validUrl = urlPattern.test(siteUrl);
     if (!validUrl) {
-      setSiteUrl({...siteUrl, error: "URL is not valid!"});
-      return;
-    } else {
-      setSiteUrl({...siteUrl, error: ""});
+      setFormErrors({ ...formErrors, siteUrl: "Invalid URL!"});
+      hasErrors = true;
     }
+
+    if (hasErrors) return;
+
     if (session?.user?.name === "Guest") return;
+
     setLoading(true);
+
     try {
-      let imageUrl = "";
-      const docRef = await addDoc(collection(db, 'siteinfo'), {
-        siteName: siteName.value,
-        siteUrl: siteUrl.value,
-        isEnabled,
-        siteMessage,
-        createdAt: serverTimestamp(),
-        siteData,
-      });
-      if (siteLogo) {
-        const storageRef = ref(storage, `images/${docRef.id}`);
-        await uploadBytes(storageRef, siteLogo);
-        imageUrl = await getDownloadURL(storageRef);
+      if (addNewDialouge.siteRawData.siteID) {
+        await updateDoc(doc(db, 'siteinfo', addNewDialouge.siteRawData.siteID), formData, { merge: true });
+      } else {
+        let imageUrl = '';
+        const docRef = await addDoc(collection(db, 'siteinfo'), formData);
+
+        if (siteLogo) {
+          const storageRef = ref(storage, `images/${docRef.id}`);
+          await uploadBytes(storageRef, siteLogo);
+          imageUrl = await getDownloadURL(storageRef);
+        }
+
+        const updateThis: UpdateDocWithID = {
+          siteID: docRef.id,
+          imageUrl,
+        }
+
+        await updateDoc(doc(db, 'siteinfo', docRef.id), updateThis, { merge: true });
+        setFormErrors({...formErrors, status: { type: true, value: "Submitted successfully !"} });
       }
-      await updateDoc(doc(db, 'siteinfo', docRef.id), {
-        siteID: docRef.id,
-        imageUrl,
-      }: updateDataProps, { merge: true });
-      setStatus({ type: true, value: "Submitted successfully !"});
     } catch (error: any) {
-      setStatus({ type: false, value: error.toString()});
+      setFormErrors({...formErrors, status: { type: false, value: error.toString() } });
+      setLoading(false);
       return;
     }
+
     setLoading(false);
     setTimeout(() => {
       getSiteList();
-      setAddNewDialouge(false);
+      setAddNewDialouge({
+        isOpen: false,
+        siteRawData: defaultBlankData
+      });
+      setFormErrors(initialFormErrors);
+      setSiteLogo(null);
+      setFormData(defaultBlankData);
     }, 1000);
-  }
+  };
 
-  
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
+    <Transition appear show={addNewDialouge.isOpen} as={Fragment}>
       <Dialog as="div" onClose={() => {}} className="relative z-50">
         <Transition.Child
           as={Fragment}
@@ -133,48 +145,39 @@ const AddNewDialouge: React.FC<AddNewDialougeProps> = ({ isOpen, setAddNewDialou
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="mx-auto w-[550px] lg:w-[1000px] container rounded bg-white p-6">
+            <Dialog.Panel className="mx-auto overflow-y-scroll scrollbar-hide w-[550px] lg:w-[1000px] container rounded bg-white p-6">
               <div className="flex justify-between items-center mb-5 text-center">
-                <Dialog.Title className="text-2xl font-semibold text-center w-[92%]">Add new site</Dialog.Title>
-                <button type="button" onClick={() => setAddNewDialouge(false)} className="w-[8%]">
-                  <RxCross2 size="lg" className="h-9 w-9 text-gray-500 hover:text-black transition-all" />
+                <Dialog.Title className="mb-4 text-2xl leading-none tracking-tight text-gray-900 lg:text-3xl w-[92%]">{addNewDialouge.siteRawData.siteID ? "Update Site info" : "Add new site"}</Dialog.Title>
+                <button type="button" onClick={() => setAddNewDialouge({ isOpen: false, siteRawData: defaultBlankData })} className="w-[8%]">
+                  <RxCross2 size={32} className="text-gray-500 hover:text-black transition-all" />
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-y-10">
                 <div>
-                  <div className="space-y-2">
-                    <label htmlFor="siteName" className="block">Site name :</label>
-                    <input id="siteName" type="text" value={siteName.value} onChange={e => setSiteName({...siteName, value: e.target.value})} className="outline-none w-full border-b-[1.7px] border-gray-500 focus:border-blue-500 transition-all" />
-                    <p className="text-sm text-red-500 h-5">{siteName.error}</p>
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="siteUrl" className="block">Site URL :</label>
-                    <input type="text" id="siteUrl" value={siteUrl.value} onChange={e => setSiteUrl({...siteUrl, value: e.target.value})} className="outline-none w-full border-b-[1.7px] border-gray-500 focus:border-blue-500 transition-all" />
-                    <p className="text-sm text-red-500 h-5">{siteUrl.error}</p>
-                  </div>
-                  <div className="space-y-2 mb-5">
-                    <label htmlFor="siteMessage" className="block">Message (Only show if disabled!) :</label>
-                    <input type="text" id="siteMessage" value={siteMessage} onChange={e => setSiteMessage(e.target.value)} className="outline-none w-full border-b-[1.7px] border-gray-500 focus:border-blue-500 transition-all" />
-                  </div>
+                  <StylistInput type="text" label="Site Name" value={formData.siteName} onChange={e => setFormData({ ...formData, siteName: e.target.value })} errorText={formErrors.siteName} placeholder="Google"  />
+
+                  <StylistInput type="text" label="Site URL" value={formData.siteUrl} onChange={e => setFormData({ ...formData, siteUrl: e.target.value })} errorText={formErrors.siteUrl} placeholder="https://google.com"  />
+
+                  <StylistInput type="text" label="Message (Only show if disabled!) :"  value={formData.siteMessage} onChange={e => setFormData({ ...formData, siteMessage: e.target.value })} placeholder="This site is disabled!"  />
+
                   <div className="space-y-2 flex items-center justify-between">
-                    <div className="space-y-2">
-                      <label htmlFor="siteLogo" className="block">Site logo :</label>
-                      <input id="siteLogo" type="file" accept="image/*" onChange={handleLogo} className="outline-none transition-all w-[105px]" />
-                    </div>
+
+                    <StylistFileInput accept="image/*" onChange={handleLogo} label="Site Logo" selectedName={siteLogo?.name || formData.imageUrl} />
+
                     <div className="flex items-center space-x-5">
-                      <label htmlFor="isEnabled">Enabled :</label>
+                      <label htmlFor="isEnabled" className="block uppercase tracking-wide text-gray-700 text-xs font-bold">Enabled :</label>
                       <Switch
-                        checked={isEnabled}
+                        checked={formData.isEnabled}
                         id="isEnabled"
-                        onChange={setEnabled}
-                        className={`${isEnabled ? 'bg-blue-700' : 'bg-gray-500'}
+                        onChange={() => setFormData({ ...formData, isEnabled: !formData.isEnabled })}
+                        className={`${formData.isEnabled ? 'bg-blue-700' : 'bg-gray-500'}
                           relative inline-flex h-[28px] w-[54px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                       >
                         <span className="sr-only">Use setting</span>
                         <span
                           aria-hidden="true"
-                          className={`${isEnabled ? 'translate-x-6' : 'translate-x-0'}
+                          className={`${formData.isEnabled ? 'translate-x-6' : 'translate-x-0'}
                             pointer-events-none inline-block h-[24px] w-[24px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
                         />
                       </Switch>
@@ -183,18 +186,23 @@ const AddNewDialouge: React.FC<AddNewDialougeProps> = ({ isOpen, setAddNewDialou
                   
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="siteData" className="block">Site data :</label>
-                  <textarea id="siteData" value={siteData} onChange={e => setSiteData(e.target.value)} className="h-[350px] outline-none border-[1.5px] border-gray-500 focus:border-blue-500 transition-all w-full block p-2.5 rounded-sm resize-none" placeholder={`
-                  {
-                      "requireId": "abdc456",
-                  }`} />
+                  <label htmlFor="siteData" className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Site data :</label>
+                  <textarea id="siteData" value={formData.siteData} onChange={e => setFormData({ ...formData, siteData: e.target.value })} className="h-[350px] resize-none appearance-none block w-full bg-gray-200 text-gray-700 border border-blue-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                    placeholder={
+                      `
+                        {
+                          "requireId": "abdc456",
+                        }
+                      `
+                    } 
+                  />
+                  <p className="text-red-500 text-xs italic h-5">{formErrors.siteData}</p>
                 </div>
                 <div className="flex justify-between items-center col-span-1 lg:col-span-2">
-                  <p className={status.type ? "text-emerald-700" : "text-red-500"}>{status.value}</p>
-                  <button type="submit" disabled={isLoading} className="px-2 py-1 text-white rounded flex items-center space-x-1 bg-blue-700 disabled:bg-gray-500 hover:bg-blue-900 transition-all">
-                    {isLoading ? <CgSpinner size="lg" className="h-4 w-4 animate-spin" /> : <AiOutlineCloudUpload size="lg" className="h-4 w-4" />}
-                    <p>{isLoading ? "Uploading..." : "Upload"}</p>
-                  </button>
+                  <p className={formErrors.status.type ? "text-emerald-700" : "text-red-500"}>{formErrors.status.value}</p>
+                  <StylistButton type="submit" loading={isLoading} label="Upload" loadingLabel="Uploading" size="sm" bgColor="#d60927" space={3} bgColorOnHover="#a3051d" childrenBeforeLabel>
+                    <AiOutlineCloudUpload size={16} />
+                  </StylistButton>
                 </div>
               </form>
             </Dialog.Panel>

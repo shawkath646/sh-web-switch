@@ -31,7 +31,7 @@ const LoginPage = () => {
       <div className="h-[500px] flex items-center justify-center">
         
         <form onSubmit={handleSubmit}>
-          <h1 className="text-2xl font-semibold mb-4 text-center">Login</h1>
+          <h1 className="text-3xl lg:text-4xl font-semibold mb-4 text-center">Login</h1>
           <input
             type="text"
             placeholder="Username"

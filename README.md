@@ -1,6 +1,6 @@
 # SH-WEB-SWITCH
 
-![SH-WEB-SWITCH Logo](https://your-image-url.com)
+![SH-WEB-SWITCH Logo](https://github.com/shawkath646/sh-web-switch/blob/main/src/app/logo.jpg?raw=true)
 
 ## Description
 SH-WEB-SWITCH is an innovative web application designed to give you full control over your projects. With this app, you can easily enable or disable your projects at any time, providing you with ultimate flexibility and control.

@@ -2,33 +2,29 @@
 import React, { useEffect, useState } from "react";
 import { redirect } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
-import { collection, getDocs, Timestamp } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
+import { defaultBlankData, DefaultDataTypes } from "./lib/defaultData";
 import Item from './components/Item';
 import AddNewDialouge from "./components/AddNewDialouge";
 import DeleteDialouge from "./components/DeleteDialouge";
-import { db } from "./firebase";
+import { db } from "./lib/firebase";
+import StylistButton from "./components/MEXTUI/StylistButton";
+import { AiFillPlusCircle } from "react-icons/ai";
+import { BiLogOut } from "react-icons/bi";
 
-interface SiteInfoProps {
-  siteID: string,
-  siteName: string;
-  siteUrl: string;
-  imageUrl: string;
-  isEnabled: boolean;
-  siteMessage: string;
-  createdAt: Timestamp;
-}
 
-interface deleteDialougeProps {
-  isOpen: boolean;
-  siteID: string;
-}
+
 
 export default function Page() {
-  const [siteList, setSiteList] = useState<SiteInfoProps[]>([]);
-  const [isAddNewDialouge, setAddNewDialouge] = useState<boolean>(false);
-  const [deleteDialouge, setDeleteDialouge] = useState<deleteDialougeProps>({
+  const [siteList, setSiteList] = useState<DefaultDataTypes[]>([]);
+  const [addNewDialouge, setAddNewDialouge] = useState({
     isOpen: false,
-    siteID: ""
+    siteRawData: defaultBlankData
+  });
+  const [deleteDialouge, setDeleteDialouge] = useState({
+    isOpen: false,
+    siteID: "",
+    imageUrl: "",
   });
   const { data: session } = useSession({
     required: true,
@@ -40,7 +36,7 @@ export default function Page() {
   const getSiteList = async () => {
     try {
       const siteListSnapshot = await getDocs(collection(db, 'siteinfo'));
-      const data: SiteInfoProps[] = siteListSnapshot.docs.map((doc) => doc.data() as SiteInfoProps);
+      const data: DefaultDataTypes[] = siteListSnapshot.docs.map((doc) => doc.data() as DefaultDataTypes);
       setSiteList(data);
     } catch (error) {
       console.error('Error fetching site list:', error);
@@ -53,17 +49,22 @@ export default function Page() {
 
   return ( 
     <section className="mt-20">
-      <div className="flex justify-between items-center">
-        <p className="text-xl text-blue-500 font-semibold">Site List</p>
-        <div className="flex space-x-3 items-center">
-          <p className="ml-auto">Login ID: {session?.user?.name}</p>
-          <button onClick={() => signOut()} className="block py-1 px-2 bg-red-600 text-white hover:bg-red-800 transition-all rounded">Log Out</button>
-          <button onClick={() => setAddNewDialouge(true)} className="block py-1 px-2 bg-violet-700 text-white hover:bg-violet-900 transition-all rounded">Add new</button>
-        </div>
+      
+      <div className="flex items-center space-x-3">
+        <p className="ml-auto text-sm">Login ID: {session?.user?.name}</p>
+        <StylistButton onClick={() => signOut()} label="Log Out" size="sm" bgColor="#7d0acf" space={3} bgColorOnHover="#5b0896">
+          <BiLogOut size={16} />
+        </StylistButton>
+        <StylistButton onClick={() => setAddNewDialouge({ isOpen: true, siteRawData: defaultBlankData })} label="Add new" size="sm" bgColor="#0f76d6" space={3} bgColorOnHover="#0b5aa3" childrenBeforeLabel>
+          <AiFillPlusCircle size={16} />
+        </StylistButton>
       </div>
+
+      <p className="text-2xl text-blue-300 mt-10 lg:mt-0">Site List</p>
+        
       
 
-      <AddNewDialouge isOpen={isAddNewDialouge} setAddNewDialouge={setAddNewDialouge} getSiteList={getSiteList} />
+      <AddNewDialouge addNewDialouge={addNewDialouge} setAddNewDialouge={setAddNewDialouge} getSiteList={getSiteList} />
       <DeleteDialouge deleteDialouge={deleteDialouge} setDeleteDialouge={setDeleteDialouge} getSiteList={getSiteList} />
 
       {siteList.length < 1 ? (
@@ -73,7 +74,7 @@ export default function Page() {
       ) : (
         <ul className="w-full mt-10 grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
           {siteList.map((e, k) => (
-            <Item key={k} e={e} getSiteList={getSiteList} setDeleteDialouge={setDeleteDialouge} />
+            <Item key={k} e={e} setAddNewDialouge={setAddNewDialouge} setDeleteDialouge={setDeleteDialouge} />
           ))}
         </ul>
       )}
