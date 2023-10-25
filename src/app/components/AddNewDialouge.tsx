@@ -80,7 +80,7 @@ const AddNewDialouge = ({ addNewDialouge, setAddNewDialouge, getSiteList }: AddN
 
     try {
       if (addNewDialouge.siteRawData.siteID) {
-        await updateDoc(doc(db, 'siteinfo', addNewDialouge.siteRawData.siteID), formData, { merge: true });
+        await updateDoc(doc(db, 'siteinfo', addNewDialouge.siteRawData.siteID), JSON.stringify(formData), { merge: true });
       } else {
         let imageUrl = '';
         const docRef = await addDoc(collection(db, 'siteinfo'), formData);
@@ -96,7 +96,7 @@ const AddNewDialouge = ({ addNewDialouge, setAddNewDialouge, getSiteList }: AddN
           imageUrl,
         }
 
-        await updateDoc(doc(db, 'siteinfo', docRef.id), updateThis, { merge: true });
+        await updateDoc(doc(db, 'siteinfo', docRef.id), JSON.stringify(updateThis), { merge: true });
         setFormErrors({...formErrors, status: { type: true, value: "Submitted successfully !"} });
       }
     } catch (error: any) {
