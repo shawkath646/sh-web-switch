@@ -87,7 +87,7 @@ const DeleteDialouge = ({ deleteDialouge, setDeleteDialouge, getSiteList }: Dele
               <Dialog.Panel className="mx-auto max-w-2xl container rounded bg-white p-6">
               <div className="flex justify-between items-center mb-5 text-center">
                 <Dialog.Title className="text-2xl font-semibold text-center w-[92%]">Delete confirmation</Dialog.Title>
-                <button type="button" onClick={() => setDeleteDialouge({ isOpen: false, siteID: "", imageUrl: ''})} className="w-[8%]">
+                <button type="button" onClick={() => setDeleteDialouge({ isOpen: false, siteID: "", imageUrl: ''})} className="w-[8%] outline-none">
                   <RxCross2 size={32} className="text-gray-500 hover:text-black transition-all" />
                 </button>
               </div>

@@ -50,14 +50,16 @@ export default function Page() {
   return ( 
     <section className="mt-20">
       
-      <div className="flex items-center space-x-3">
-        <p className="ml-auto text-sm">Login ID: {session?.user?.name}</p>
-        <StylistButton onClick={() => signOut()} label="Log Out" size="sm" bgColor="#7d0acf" space={3} bgColorOnHover="#5b0896">
-          <BiLogOut size={16} />
-        </StylistButton>
-        <StylistButton onClick={() => setAddNewDialouge({ isOpen: true, siteRawData: defaultBlankData })} label="Add new" size="sm" bgColor="#0f76d6" space={3} bgColorOnHover="#0b5aa3" childrenBeforeLabel>
-          <AiFillPlusCircle size={16} />
-        </StylistButton>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-center">
+        <p className="text-sm truncate">Login ID: {session?.user?.name}</p>
+        <div className="flex items-center space-x-2 ml-auto">
+          <StylistButton onClick={() => signOut()} label="Log Out" size="sm" bgColor="#7d0acf" space={3} bgColorOnHover="#5b0896">
+            <BiLogOut size={16} />
+          </StylistButton>
+          <StylistButton onClick={() => setAddNewDialouge({ isOpen: true, siteRawData: defaultBlankData })} label="Add new" size="sm" bgColor="#0f76d6" space={3} bgColorOnHover="#0b5aa3" childrenBeforeLabel>
+            <AiFillPlusCircle size={16} />
+          </StylistButton>
+        </div>
       </div>
 
       <p className="text-2xl text-blue-300 mt-10 lg:mt-0">Site List</p>

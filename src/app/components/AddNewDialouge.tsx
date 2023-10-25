@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 import { addDoc, serverTimestamp, collection, updateDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Dialog, Switch, Transition } from '@headlessui/react';
-import { AddNewDialougePropsTypes, UpdateDocWithID, defaultBlankData } from '../lib/defaultData';
+import { AddNewDialougePropsTypes, defaultBlankData } from '../lib/defaultData';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { RxCross2 } from 'react-icons/rx';
 import { db, storage } from '@/app/lib/firebase';
@@ -21,7 +21,7 @@ const AddNewDialouge = ({ addNewDialouge, setAddNewDialouge, getSiteList }: AddN
     status: { type: true, value: '' }
   }
 
-  const [formData, setFormData] = useState(defaultBlankData);
+  const [formData, setFormData] = useState<any>(defaultBlankData);
   const [formErrors, setFormErrors] = useState(initialFormErrors);
   const [siteLogo, setSiteLogo] = useState<File | null>(null);
   const [isLoading, setLoading] = useState(false);
@@ -80,7 +80,7 @@ const AddNewDialouge = ({ addNewDialouge, setAddNewDialouge, getSiteList }: AddN
 
     try {
       if (addNewDialouge.siteRawData.siteID) {
-        await updateDoc(doc(db, 'siteinfo', addNewDialouge.siteRawData.siteID), JSON.stringify(formData), { merge: true });
+        await updateDoc(doc(db, 'siteinfo', addNewDialouge.siteRawData.siteID), formData, { merge: true });
       } else {
         let imageUrl = '';
         const docRef = await addDoc(collection(db, 'siteinfo'), formData);
@@ -91,12 +91,12 @@ const AddNewDialouge = ({ addNewDialouge, setAddNewDialouge, getSiteList }: AddN
           imageUrl = await getDownloadURL(storageRef);
         }
 
-        const updateThis: UpdateDocWithID = {
+        const updateThis: any = {
           siteID: docRef.id,
           imageUrl,
         }
 
-        await updateDoc(doc(db, 'siteinfo', docRef.id), JSON.stringify(updateThis), { merge: true });
+        await updateDoc(doc(db, 'siteinfo', docRef.id), updateThis, { merge: true });
         setFormErrors({...formErrors, status: { type: true, value: "Submitted successfully !"} });
       }
     } catch (error: any) {
@@ -145,15 +145,15 @@ const AddNewDialouge = ({ addNewDialouge, setAddNewDialouge, getSiteList }: AddN
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="mx-auto overflow-y-scroll scrollbar-hide w-[550px] lg:w-[1000px] container rounded bg-white p-6">
+            <Dialog.Panel className="mx-auto overflow-y-scroll overflow-x-hidden scrollbar-hide lg:w-[1000px] container rounded bg-white p-6">
               <div className="flex justify-between items-center mb-5 text-center">
                 <Dialog.Title className="mb-4 text-2xl leading-none tracking-tight text-gray-900 lg:text-3xl w-[92%]">{addNewDialouge.siteRawData.siteID ? "Update Site info" : "Add new site"}</Dialog.Title>
-                <button type="button" onClick={() => setAddNewDialouge({ isOpen: false, siteRawData: defaultBlankData })} className="w-[8%]">
+                <button type="button" onClick={() => setAddNewDialouge({ isOpen: false, siteRawData: defaultBlankData })} className="w-[8%] outline-none">
                   <RxCross2 size={32} className="text-gray-500 hover:text-black transition-all" />
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-y-10">
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-y-4 gap-x-10 lg:gap-y-0">
                 <div>
                   <StylistInput type="text" label="Site Name" value={formData.siteName} onChange={e => setFormData({ ...formData, siteName: e.target.value })} errorText={formErrors.siteName} placeholder="Google"  />
 
@@ -187,7 +187,7 @@ const AddNewDialouge = ({ addNewDialouge, setAddNewDialouge, getSiteList }: AddN
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="siteData" className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Site data :</label>
-                  <textarea id="siteData" value={formData.siteData} onChange={e => setFormData({ ...formData, siteData: e.target.value })} className="h-[350px] resize-none appearance-none block w-full bg-gray-200 text-gray-700 border border-blue-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  <textarea id="siteData" value={formData.siteData} onChange={e => setFormData({ ...formData, siteData: e.target.value })} className="h-[150px] lg:h-[350px] resize-none appearance-none block w-full bg-gray-200 text-gray-700 border border-blue-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                     placeholder={
                       `
                         {

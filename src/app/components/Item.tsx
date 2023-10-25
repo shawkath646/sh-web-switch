@@ -21,11 +21,11 @@ const Item = ({ e, setAddNewDialouge, setDeleteDialouge }: ItemPropsType) => {
   const momentDate = createdAtDate !== null ? createdAtDate : undefined;
 
   return (
-    <li className="space-y-3 border border-gray-900 p-5 rounded bg-black bg-opacity-50 backdrop-blur-xl drop-shadow-lg w-[460px] mx-auto">
+    <li className="space-y-3 border border-gray-900 p-5 rounded bg-black bg-opacity-50 backdrop-blur-xl drop-shadow-lg w-[430px] md:w-[460px] mx-auto">
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <Image src={e.imageUrl || noLogo.src} alt="site logo" height={30} width={30} />
-          <p className="font-semibold text-xl text-teal-500 truncate w-[350px]">{e.siteName} <span className="text-sm">({e.siteUrl})</span></p>
+          <p className="font-semibold text-xl text-teal-500 truncate w-[350px]">{e.siteName} <br /> <span className="text-sm">({e.siteUrl})</span></p>
         </div>
         <div>
           <label className="relative inline-flex items-center cursor-pointer">
@@ -60,7 +60,7 @@ const Item = ({ e, setAddNewDialouge, setDeleteDialouge }: ItemPropsType) => {
             </Link>
           </div>
 
-          <Moment date={momentDate} fromNow className="text-sm" />
+          <Moment date={momentDate} fromNow className="text-sm ml-auto" />
         </div>
       </section>
     </li>

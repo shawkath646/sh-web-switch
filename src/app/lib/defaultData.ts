@@ -27,10 +27,6 @@ export interface ItemPropsType {
   setDeleteDialouge: (newState: { isOpen: boolean, siteID: string, imageUrl: string }) => void;
 }
 
-export interface UpdateDocWithID {
-  siteID: string,
-  imageUrl: string,
-}
 
 
 export const defaultBlankData = {
