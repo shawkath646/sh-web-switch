@@ -49,7 +49,7 @@ const Item = ({ e }: { e: DefaultDataTypes }) => {
               </StylistButton>
             </Link>
 
-            <Link href={`?addNewDialogue=true&siteID=${e.siteID}&siteName=${e.siteName}&siteURL=${e.siteUrl}&siteMessage=${e.siteMessage}&siteData=${e.siteData}&isEnabled=${e.isEnabled}&imageURL=${e.imageUrl}`}>
+            <Link href={`/new?siteID=${e.siteID}&siteName=${e.siteName}&siteURL=${e.siteUrl}&siteMessage=${e.siteMessage}&siteData=${e.siteData}&isEnabled=${e.isEnabled}&imageURL=${e.imageUrl}`}>
               <StylistButton label="Modify" size="sm" bgColor="#0d9488" space={3} bgColorOnHover="#0c7067" childrenBeforeLabel>
                 <AiOutlineEdit size={16} />
               </StylistButton>

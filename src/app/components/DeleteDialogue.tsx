@@ -27,7 +27,6 @@ const DeleteDialogue = () => {
   const imageUrl = searchParams.get("imageUrl");
 
   const handleDelete = async() => {
-    console.log(siteID);
     if (!siteID || imageUrl === null) {
       setStatus({ type: false, status: "Invalid site data provided"});
       return;

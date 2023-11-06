@@ -21,9 +21,8 @@ const authOptions: NextAuthOptions = {
         if (userDoc.exists()) {
           if (credentials.password === userDoc.data().password) {
             return { id: credentials.username, name: userDoc.data().name, username: credentials.username };
-          }
-        }
-        return null;
+          } else throw new Error("Password not matched")
+        } else throw new Error("User not exists")
       },
     }),
   ],

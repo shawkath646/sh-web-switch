@@ -1,8 +1,8 @@
 "use client";
+import { SessionProvider } from 'next-auth/react'
 import { Fragment } from "react";
 import { useSearchParams } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
-import AddNewDialogue from "./AddNewDialogue";
 import DeleteDialogue from "./DeleteDialogue";
 
 export default function DialogueBox() {
@@ -19,25 +19,7 @@ export default function DialogueBox() {
     
 
     return (
-        <>
-            <Transition appear show={isOpenParams("addNewDialogue")} as={Fragment}>
-                <Dialog as="div" onClose={() => {}} className="relative z-50">
-                <Transition.Child
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <div className="fixed inset-0 bg-black/70" aria-hidden="true" />
-                </Transition.Child>
-                <AddNewDialogue />
-                </Dialog>
-            </Transition>
-
-
+        <SessionProvider>
             <Transition appear show={isOpenParams("deleteDialogue")} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={() => {}}>
                 <Transition.Child
@@ -54,6 +36,6 @@ export default function DialogueBox() {
                 <DeleteDialogue />
                 </Dialog>
             </Transition>
-        </>
+        </SessionProvider>
     );
 }
