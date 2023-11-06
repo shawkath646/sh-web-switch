@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { StylistButtonPropsType } from "./types";
 import { CgSpinner } from "react-icons/cg";
@@ -21,14 +22,6 @@ const StylistButton: React.FC<StylistButtonPropsType> = ({
 
 
   const [isHovering, setIsHovering] = useState(false);
-
-  const handleMouseEnter = () => {
-    setIsHovering(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-  };
 
   const RenderContent = () => {
     if (loading) {
@@ -72,17 +65,15 @@ const StylistButton: React.FC<StylistButtonPropsType> = ({
   else if (size === "md") responsiveClasses = "px-4 py-2";
   else if (size === "lg") responsiveClasses = "px-6 py-3";
 
-
   return (
     <button
         type={type}
         {...props}
         className={`rounded-lg disabled:bg-gray-500 transition-all flex items-center outline-none font-medium ${responsiveClasses}`}
-
         style={{ backgroundColor: isHovering ? bgColorOnHover : bgColor, color: textColor }}
         disabled={loading}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
     >
         <RenderContent />
     </button>

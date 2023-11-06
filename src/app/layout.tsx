@@ -1,8 +1,8 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import AuthProvider from './components/AuthProvider'
-import backgroundImage from './assets/background.jpg';
+import MainLayout from './components/MainLayout'
+
 
 
 const inter = Inter({ subsets: ['latin'] })
@@ -20,19 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <main style={{ backgroundImage: `url(${backgroundImage.src})` }} className="bg-center bg-cover min-h-screen text-white">
-            <div className="min-h-screen backdrop-blur-xl">
-              <div className="mx-auto p-4 container">
-                <p className="text-4xl lg:text-5xl leading-none tracking-tight font-extrabold">
-                  <span className="text-blue-600">SH</span> WEB SWITCH
-                </p>
-                <p>Control every application made by SH MARUF</p>
-                {children}
-              </div>
-            </div>
-          </main>
-        </AuthProvider>
+        <MainLayout>
+          {children}
+        </MainLayout>
       </body>
     </html>
   )

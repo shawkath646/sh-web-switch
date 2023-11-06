@@ -1,3 +1,6 @@
+import { Path, UseFormRegister } from "react-hook-form";
+import { DefaultFormDataTypes } from "@/app/lib/defaultData";
+
 export interface StylistButtonPropsType extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     bgColor?: string;
     textColor?: string;
@@ -11,12 +14,15 @@ export interface StylistButtonPropsType extends React.ButtonHTMLAttributes<HTMLB
     size?: string;
 }
 
-export interface StylistInputPropsType extends React.InputHTMLAttributes<HTMLInputElement> {
-    label: string;
+export interface StylistInputPropsTypes {
     errorText?: string;
+    type: string;
+    label: Path<DefaultFormDataTypes>;
+    labelText: string;
+    register: UseFormRegister<DefaultFormDataTypes>;
 }
 
 export interface StylistFileInputPropsType extends React.InputHTMLAttributes<HTMLInputElement> {
-    label: string;
+    labelText: string;
     selectedName: string;
 }
