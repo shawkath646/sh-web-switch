@@ -1,12 +1,12 @@
 "use client";
-import { Fragment, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from 'next-auth/react';
-import { Dialog, Transition } from "@headlessui/react";
-import StylistButton from "./MEXTUI/StylistButton";
+import { useState } from "react";
+import StylistButton from "../components/MEXTUI/StylistButton";
+import deleteData from "../lib/deleteData";
 import { MdDelete } from 'react-icons/md';
 import { RxCross2 } from 'react-icons/rx';
-import deleteData from "../lib/deleteData";
+
 
 
 
@@ -21,23 +21,21 @@ const DeleteDialogue = () => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { data: session } = useSession();
 
   const siteID = searchParams.get("siteID");
-  const imageUrl = searchParams.get("imageUrl");
+  const imageUrl = searchParams.get("imageUrl") || '';
 
   const handleDelete = async() => {
-    if (!siteID || imageUrl === null) {
+    if (!siteID) {
       setStatus({ type: false, status: "Invalid site data provided"});
       return;
     }
-    if (session?.user?.name === "Guest") return;
     setLoading(true);
     try {
       const { type, status } = await deleteData(siteID, imageUrl);
       setStatus({ type, status });
       setLoading(false);
-      setTimeout(() => router.push("?deleteDialogue=false"), 1000);
+      setTimeout(() => router.back(), 1000);
     } catch (error: any) {
       setStatus({ type: false, status: error.toString()});
       setLoading(false);
@@ -45,20 +43,10 @@ const DeleteDialogue = () => {
   }
   
   return (
-    <div className="fixed inset-0 overflow-y-auto">
-      <div className="flex min-h-full items-center justify-center p-4 text-center">
-        <Transition.Child
-          as={Fragment}
-          enter="ease-out duration-300"
-          enterFrom="opacity-0 scale-95"
-          enterTo="opacity-100 scale-100"
-          leave="ease-in duration-200"
-          leaveFrom="opacity-100 scale-100"
-          leaveTo="opacity-0 scale-95"
-        >
-          <Dialog.Panel className="mx-auto max-w-2xl container rounded bg-white p-6">
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="border p-8 rounded-md shadow">
           <div className="flex justify-between items-center mb-5 text-center">
-            <Dialog.Title className="text-2xl font-semibold text-center w-[92%]">Delete confirmation</Dialog.Title>
+            <p className="text-2xl font-semibold text-center w-[92%]">Delete confirmation</p>
             <button type="button" onClick={() => router.push("?deleteDialogue=false")} className="w-[8%] outline-none">
               <RxCross2 size={32} className="text-gray-500 hover:text-black transition-all" />
             </button>
@@ -70,8 +58,6 @@ const DeleteDialogue = () => {
               <MdDelete size={16} />
             </StylistButton>
           </div>
-          </Dialog.Panel>
-        </Transition.Child>
       </div>
     </div>
   );

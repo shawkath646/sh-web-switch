@@ -1,9 +1,15 @@
 "use server";
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "../api/auth/[...nextauth]/route";
 import { collection, deleteDoc, doc, getDoc } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import { db, storage } from "./firebase";
 
 export default async function deleteData(siteID: string, imageUrl: string) {
+
+    const session = await getServerSession(authOptions);
+
+    if (session?.user?.name === "Guest") return { type: false, status: "Guest user can't delete data" };
 
     const storageRef = ref(storage, `images/${siteID}`);
     const docRef = doc(collection(db, 'siteinfo'), siteID);

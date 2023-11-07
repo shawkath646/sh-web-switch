@@ -1,17 +1,18 @@
 "use client";
-import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Switch } from '@headlessui/react';
+import { useState } from 'react';
 import { Controller, useForm, SubmitHandler } from "react-hook-form"
 import * as yup from 'yup';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DefaultFormDataTypes } from '../lib/defaultData';
-import { AiOutlineCloudUpload } from 'react-icons/ai';
 import StylistInput from '../components/MEXTUI/StylistInput';
 import StylistFileInput from '../components/MEXTUI/StylistFileInput';
 import StylistButton from '../components/MEXTUI/StylistButton';
 import toBase64 from '../lib/toBase64';
 import uploadData from '../lib/uploadData';
+import { AiOutlineCloudUpload } from 'react-icons/ai';
+
 
 
 export default function Page() {
@@ -108,23 +109,19 @@ export default function Page() {
   return (
     <main className="min-h-screen">
         <section className="container p-4 mx-auto">
-            <p className="text-4xl lg:text-5xl leading-none tracking-tight font-extrabold">
-                <span className="text-blue-600">SH</span> WEB SWITCH
-            </p>
-            <p>Control every application made by SH MARUF</p>
-
+            <Link href="/">
+              <p className="text-4xl lg:text-5xl leading-none tracking-tight font-extrabold">
+                  <span className="text-blue-600">SH</span> WEB SWITCH
+              </p>
+              <p>Control every application made by SH MARUF</p>
+            </Link>
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-2 gap-y-4 gap-x-10 lg:gap-y-0 mt-20">
                 <div>
                     <StylistInput type="text" labelText="Site ID (Optional)" label="siteID" register={register} errorText={errors.siteID?.message} />
-
                     <StylistInput type="text" labelText="Site Name" label="siteName" register={register} errorText={errors.siteName?.message} />
-
                     <StylistInput type="text" labelText="Site URL" label="siteUrl" register={register} errorText={errors.siteUrl?.message}  />
-
                     <StylistInput type="text" labelText="Message (Only show if disabled!) :" label="siteMessage"  register={register} errorText={errors.siteMessage?.message} />
-
                     <div className="space-y-2 flex items-center justify-between">
-
                         <Controller
                             control={control}
                             name="selectedFile"
@@ -137,32 +134,20 @@ export default function Page() {
                             />
                             )}
                         />
-
-                        <div className="flex items-center space-x-5">
-                            <label htmlFor="isEnabled" className="block uppercase tracking-wide text-gray-700 text-xs font-bold">Enabled :</label>
-                            <Controller
-                            control={control}
-                            name="isEnabled"
-                            render={({ field: { value, onChange } }) => (
-                                <Switch
-                                checked={value}
-                                id="isEnabled"
-                                onChange={onChange}
-                                className={`${value ? 'bg-blue-700' : 'bg-gray-500'}
-                                    relative inline-flex h-[28px] w-[54px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
-                                >
-                                <span className="sr-only">Use setting</span>
-                                <span
-                                    aria-hidden="true"
-                                    className={`${value ? 'translate-x-6' : 'translate-x-0'}
-                                    pointer-events-none inline-block h-[24px] w-[24px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out`}
-                                />
-                                </Switch>
-                            )}
-                            />
-                        </div>
+                        <Controller
+                          control={control}
+                          name="isEnabled"
+                          render={({ field: { value, onChange } }) => (
+                            <div className="flex space-x-1 items-center">
+                              <p>Enabled :</p>
+                              <label className="relative inline-flex items-center text-gray-900">
+                                <input type="checkbox" id="isEnabled" checked={value} value="" onChange={onChange} className="sr-only peer" />
+                                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full  after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 cursor-pointer"></div>
+                              </label>
+                            </div>
+                          )}
+                          />
                     </div>
-                
                 </div>
                 <div className="space-y-2">
                     <label htmlFor="siteData" className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">Site data :</label>

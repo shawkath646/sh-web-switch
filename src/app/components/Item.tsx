@@ -17,7 +17,7 @@ const Item = ({ e }: { e: DefaultDataTypes }) => {
   const createdAtDate = moment(e.createdAt, "YYYYMMDD").fromNow();
 
   return (
-    <li className="space-y-3 border border-gray-900 p-5 rounded bg-black bg-opacity-50 backdrop-blur-xl drop-shadow-lg w-[430px] md:w-[460px] mx-auto">
+    <li className="space-y-3 border border-gray-900 p-5 rounded bg-black bg-opacity-50 w-[430px] md:w-[460px] mx-auto">
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <Image src={e.imageUrl || noLogo.src} alt="site logo" height={30} width={30} />
@@ -44,7 +44,7 @@ const Item = ({ e }: { e: DefaultDataTypes }) => {
 
           <div className="flex items-center space-x-2">
 
-            <Link href={`?deleteDialogue=true&siteID=${e.siteID}&imageUrl=${e.imageUrl}`}>
+            <Link href={`/delete?siteID=${e.siteID}&imageUrl=${e.imageUrl}`}>
               <StylistButton label="Delete" size="sm" bgColor="#d60927" space={3} bgColorOnHover="#a3051d" childrenBeforeLabel>
                 <MdDelete size={16} />
               </StylistButton>

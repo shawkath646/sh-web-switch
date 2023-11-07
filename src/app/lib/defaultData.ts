@@ -30,6 +30,11 @@ export interface DefaultFormDataTypes {
   base64Image: string
 }
 
+export interface SignInFormDataTypes {
+  username: string;
+  password: string;
+}
+
 export interface UploadDataPropsTypes {
   data: any;
   siteID: string;

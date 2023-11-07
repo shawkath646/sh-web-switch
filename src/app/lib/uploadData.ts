@@ -1,4 +1,4 @@
-import 'server-only'
+'use server'
 import { getServerSession } from "next-auth/next"
 import { addDoc, collection, doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadString } from "firebase/storage";
@@ -9,8 +9,6 @@ import { authOptions } from "../api/auth/[...nextauth]/route";
 export default async function uploadData({ data, siteID, imageStatus }: UploadDataPropsTypes ) {
 
     const session = await getServerSession(authOptions);
-
-    console.log(session?.user?.name);
 
     if (session?.user?.name === "Guest") return { type: false, status: "Guest user can't add or update data" };
 

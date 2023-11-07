@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.17",
     "@hookform/resolvers": "^3.3.2",
     "encoding": "^0.1.13",
     "firebase": "^10.5.2",
