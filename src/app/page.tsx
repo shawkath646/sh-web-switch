@@ -1,18 +1,15 @@
-"use server";
+import 'server-only'
 import Link from "next/link";
 import { redirect } from 'next/navigation'
 import { getServerSession } from "next-auth/next"
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { DefaultDataTypes } from "./lib/defaultData";
-import Item from './components/Item';
-import { db } from "./lib/firebase";
 import StylistButton from "./components/MEXTUI/StylistButton";
 import { AiFillPlusCircle } from "react-icons/ai";
 import SignOutButton from "./components/SignOutButton";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-import DialogueBox from "./components/DialogueBox";
 import Image from 'next/image';
 import backgroundImage from './assets/background.jpg';
+import dynamic from 'next/dynamic'
+
 
 
 export default async function Page() {
@@ -21,9 +18,13 @@ export default async function Page() {
 
   if (!session) redirect("/signin");
 
-  const siteListSnapshot = await getDocs(query(collection(db, 'siteinfo'), orderBy("createdAt", "desc")));
+  const DynamicDialogueBox = dynamic(() => import('./components/DialogueBox'), {
+    loading: () => <p>Loading...</p>,
+  })
 
-  const siteList = siteListSnapshot.docs.map((doc) => doc.data() as DefaultDataTypes);
+  const DynamicSiteList = dynamic(() => import('./components/SiteList'), {
+    loading: () => <p>Loading...</p>,
+  })
 
   return (
     <>
@@ -54,23 +55,11 @@ export default async function Page() {
 
                 </div>
               </div>
-
               <p className="text-2xl text-blue-300 mt-10 lg:mt-0">Site List</p>
                 
-              <DialogueBox />
-
-              {siteList.length < 1 ? (
-                <div className="w-full h-48 flex items-center justify-center">
-                  <p>No site added to list.</p>
-                </div>
-              ) : (
-                <ul className="w-full mt-10 grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-4">
-                  {siteList.map((e, k) => {
-                    const createdAtDate = e.createdAt instanceof Date ? e.createdAt : new Date(e.createdAt.seconds * 1000);
-                    return <Item key={k} e={{ ...e, createdAt: createdAtDate }} />;
-                  })}
-                </ul>
-              )}
+              <DynamicDialogueBox/>
+              <DynamicSiteList />
+              
             </section>
           </div>
         </div>

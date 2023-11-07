@@ -1,4 +1,4 @@
-"use server";
+import 'server-only'
 import { getServerSession } from "next-auth/next"
 import { addDoc, collection, doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadString } from "firebase/storage";

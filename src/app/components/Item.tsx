@@ -1,6 +1,7 @@
+import 'server-only'
 import Link from "next/link";
 import Image from "next/image";
-import moment from "moment";
+import moment from 'moment';
 import noLogo from '../assets/noLogo.png';
 import { DefaultDataTypes } from "../lib/defaultData";
 import { AiOutlineEdit } from 'react-icons/ai';
